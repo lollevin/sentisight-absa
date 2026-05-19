@@ -153,17 +153,35 @@ with st.sidebar:
     info     = PROVIDER_INFO[provider]
     st.caption(f"ℹ️ {info['note']}")
     model    = st.selectbox(t("sidebar_model"), PROVIDER_MODELS[provider])
-    api_key  = st.text_input(
-        t("sidebar_api_key"),
-        type="password",
-        value=_get_default_api_key(provider),
-        placeholder=t("sidebar_api_placeholder"),
-    )
-    st.markdown(
-        f'<a href="{info["key_url"]}" target="_blank" style="font-size:.78rem;color:#a78bfa;">'
-        f'🔑 Get {provider} API Key →</a>',
-        unsafe_allow_html=True,
-    )
+
+    # ── Smart API key: show status badge if key is pre-loaded, else show input ──
+    default_key = _get_default_api_key(provider)
+    if default_key:
+        api_key = default_key
+        st.markdown(
+            '<div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);'
+            'border-radius:8px;padding:.5rem .8rem;display:flex;align-items:center;gap:.5rem;">'
+            '<span style="color:#22c55e;font-size:1rem;">✅</span>'
+            '<span style="color:#86efac;font-size:.85rem;font-weight:600;">API Key Ready</span>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+        # Allow override via expander (advanced users)
+        with st.expander("🔧 Use a different key", expanded=False):
+            override = st.text_input("Override API Key", type="password", placeholder="sk-...")
+            if override:
+                api_key = override
+    else:
+        api_key = st.text_input(
+            t("sidebar_api_key"),
+            type="password",
+            placeholder=t("sidebar_api_placeholder"),
+        )
+        st.markdown(
+            f'<a href="{info["key_url"]}" target="_blank" style="font-size:.78rem;color:#a78bfa;">'
+            f'🔑 Get {provider} API Key →</a>',
+            unsafe_allow_html=True,
+        )
 
     st.markdown("---")
     st.markdown(t("sidebar_how_to_get"))
