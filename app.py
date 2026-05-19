@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 import streamlit as st
 from dotenv import load_dotenv
 
-from absa_engine import PROVIDER_MODELS, analyze_batch, analyze_review
+from absa_engine import PROVIDER_MODELS, PROVIDER_INFO, analyze_batch, analyze_review
 from evaluator import evaluate_results, load_labeled_data, vader_baseline_metrics
 from lang import t, tlist
 from traditional import analyze_batch_vader, analyze_vader
@@ -19,17 +19,33 @@ from visualizer import (
 
 load_dotenv()
 
-def _get_default_api_key() -> str:
+def _get_default_api_key(provider: str = "DeepSeek") -> str:
     """Read API key from .env (local) or st.secrets (Streamlit Cloud)."""
+    env_map = {
+        "DeepSeek": "DEEPSEEK_API_KEY",
+        "OpenAI":   "OPENAI_API_KEY",
+        "Groq":     "GROQ_API_KEY",
+        "Gemini":   "GEMINI_API_KEY",
+    }
+    env_var = env_map.get(provider, "DEEPSEEK_API_KEY")
     # 1. Try environment variable (local .env)
-    key = os.getenv("DEEPSEEK_API_KEY", os.getenv("OPENAI_API_KEY", ""))
-    if key:
-        return key
+    key = os.getenv(env_var, "")
+    if not key:  # fallback: any known key
+        for v in env_map.values():
+            key = os.getenv(v, "")
+            if key:
+                break
     # 2. Try Streamlit secrets (cloud deployment)
-    try:
-        key = st.secrets.get("DEEPSEEK_API_KEY", st.secrets.get("OPENAI_API_KEY", ""))
-    except Exception:
-        pass
+    if not key:
+        try:
+            key = st.secrets.get(env_var, "")
+            if not key:
+                for v in env_map.values():
+                    key = st.secrets.get(v, "")
+                    if key:
+                        break
+        except Exception:
+            pass
     return key or ""
 
 # ─── Page config ───────────────────────────────────────────────────────────────
@@ -134,12 +150,19 @@ with st.sidebar:
     st.markdown(f"**{t('sidebar_api_config')}**")
 
     provider = st.selectbox(t("sidebar_provider"), list(PROVIDER_MODELS.keys()), index=0)
+    info     = PROVIDER_INFO[provider]
+    st.caption(f"ℹ️ {info['note']}")
     model    = st.selectbox(t("sidebar_model"), PROVIDER_MODELS[provider])
     api_key  = st.text_input(
         t("sidebar_api_key"),
         type="password",
-        value=_get_default_api_key(),
+        value=_get_default_api_key(provider),
         placeholder=t("sidebar_api_placeholder"),
+    )
+    st.markdown(
+        f'<a href="{info["key_url"]}" target="_blank" style="font-size:.78rem;color:#a78bfa;">'
+        f'🔑 Get {provider} API Key →</a>',
+        unsafe_allow_html=True,
     )
 
     st.markdown("---")

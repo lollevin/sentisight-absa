@@ -40,24 +40,43 @@ def get_client(provider: str, api_key: str) -> OpenAI:
         return OpenAI(api_key=api_key, base_url="https://api.deepseek.com")
     elif provider == "OpenAI":
         return OpenAI(api_key=api_key)
+    elif provider == "Groq":
+        return OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
+    elif provider == "Gemini":
+        return OpenAI(api_key=api_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
     else:
         raise ValueError(f"Unsupported provider: {provider}")
+
+
+# Groq and Gemini don't support response_format=json_object for all models,
+# so we handle JSON extraction differently
+_JSON_FORMAT_PROVIDERS = {"DeepSeek", "OpenAI"}
 
 
 def analyze_review(review: str, provider: str, api_key: str, model: str) -> dict:
     client = get_client(provider, api_key)
 
-    response = client.chat.completions.create(
+    kwargs: dict = dict(
         model=model,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"Analyze this customer review:\n\n{review}"},
         ],
-        response_format={"type": "json_object"},
         temperature=0.3,
     )
+    if provider in _JSON_FORMAT_PROVIDERS:
+        kwargs["response_format"] = {"type": "json_object"}
 
-    raw = response.choices[0].message.content
+    response = client.chat.completions.create(**kwargs)
+
+    raw = response.choices[0].message.content or ""
+    # Strip markdown code fences if present (e.g. ```json ... ```)
+    raw = raw.strip()
+    if raw.startswith("```"):
+        raw = raw.split("```")[1]
+        if raw.startswith("json"):
+            raw = raw[4:]
+    raw = raw.strip()
     result = json.loads(raw)
 
     # Normalize fields to avoid KeyError downstream
@@ -93,5 +112,14 @@ def analyze_batch(reviews: list[str], provider: str, api_key: str, model: str, p
 
 PROVIDER_MODELS = {
     "DeepSeek": ["deepseek-chat", "deepseek-reasoner"],
-    "OpenAI": ["gpt-4o-mini", "gpt-4o", "gpt-3.5-turbo"],
+    "OpenAI":   ["gpt-4o-mini", "gpt-4o", "gpt-3.5-turbo"],
+    "Groq":     ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gemma2-9b-it"],
+    "Gemini":   ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"],
+}
+
+PROVIDER_INFO = {
+    "DeepSeek": {"label": "DeepSeek 🇨🇳", "note": "Recommended · cheapest · ¥10 lasts long", "key_url": "https://platform.deepseek.com"},
+    "OpenAI":   {"label": "OpenAI",        "note": "GPT-4o · most popular",                   "key_url": "https://platform.openai.com"},
+    "Groq":     {"label": "Groq ⚡",        "note": "Free tier · fastest inference",            "key_url": "https://console.groq.com"},
+    "Gemini":   {"label": "Gemini 🔵",     "note": "Free tier · Google AI",                    "key_url": "https://aistudio.google.com/apikey"},
 }
