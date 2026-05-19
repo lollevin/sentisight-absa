@@ -70,6 +70,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "tab1_trad_header": "📉 Traditional VADER",
         "tab1_vader_only": "Overall Label Only",
         "tab1_vader_limit": "⚠️ Cannot identify specific aspects.<br>No marketing action possible.",
+        "tab1_vader_blind_spots": "What VADER cannot detect:",
         "tab1_vader_warn_title": "❌ VADER Limitation",
         "tab1_vader_warn_body": "VADER outputs a single sentiment score — it cannot tell you <i>which</i> product dimensions are positive or negative. Marketers cannot act on \"Neutral\" alone.",
 
@@ -117,6 +118,15 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "tab3_conclusion": "<b>✅ Conclusion</b><br>ABSA provides <b>5x more actionable information</b> per review compared to traditional sentiment analysis. Instead of a single \"Neutral\" label, marketers receive specific aspect-level insights and concrete recommendations — enabling data-driven decisions on advertising, product improvement, and customer retention strategies.",
 
         # ── Tab 4
+        "tab4_methodology_header": "Testing Methodology",
+        "tab4_step1_title": "① Benchmark Dataset",
+        "tab4_step1_desc": "{n} manually labeled aspect-sentiment pairs as ground truth",
+        "tab4_step2_title": "② Run ABSA Model",
+        "tab4_step2_desc": "SentiSight analyzes each review and predicts aspect sentiments",
+        "tab4_step3_title": "③ Compare Results",
+        "tab4_step3_desc": "Predicted aspects matched against ground-truth labels",
+        "tab4_step4_title": "④ Score vs VADER",
+        "tab4_step4_desc": "Precision / Recall / F1 compared with traditional VADER baseline",
         "tab4_title": "#### Model Testing & Validation",
         "tab4_caption": "Evaluate SentiSight's ABSA accuracy against a manually labeled benchmark dataset of 30 aspect-sentiment pairs. Compare performance against VADER baseline.",
         "tab4_info": "📋 Benchmark dataset: **{pairs}** labeled aspect-sentiment pairs across **{reviews}** unique reviews covering 12+ aspect categories.",
@@ -209,6 +219,7 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "tab1_trad_header": "📉 传统 VADER 结果",
         "tab1_vader_only": "仅能提供整体标签",
         "tab1_vader_limit": "⚠️ 无法识别具体方面。<br>无法生成营销行动建议。",
+        "tab1_vader_blind_spots": "VADER 无法检测的方面：",
         "tab1_vader_warn_title": "❌ VADER 的局限性",
         "tab1_vader_warn_body": "VADER 只输出一个整体情感分数——无法告诉你<i>哪个</i>产品维度是正面或负面的。营销人员无法依据单一的「中性」做出决策。",
 
@@ -256,6 +267,15 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "tab3_conclusion": "<b>✅ 结论</b><br>与传统情感分析相比，ABSA 每条评论提供的信息量<b>多 5 倍</b>。相比单一的「中性」标签，营销人员获得了具体的方面级洞察和明确的建议——为广告投放、产品改进和客户留存提供数据支持。",
 
         # ── Tab 4
+        "tab4_methodology_header": "测试方法",
+        "tab4_step1_title": "① 基准数据集",
+        "tab4_step1_desc": "{n} 条人工标注的方面-情感对作为标准答案",
+        "tab4_step2_title": "② 运行 ABSA 模型",
+        "tab4_step2_desc": "慧感分析每条评论并预测各方面的情感倾向",
+        "tab4_step3_title": "③ 结果对比",
+        "tab4_step3_desc": "将预测方面与人工标注标准答案进行匹配比较",
+        "tab4_step4_title": "④ 与 VADER 评分对比",
+        "tab4_step4_desc": "计算精确率/召回率/F1，与传统 VADER 基准方法对比",
         "tab4_title": "#### 模型测试与验证",
         "tab4_caption": "基于 30 条人工标注的方面-情感基准数据集，评估慧感 ABSA 的准确率，并与 VADER 基准对比。",
         "tab4_info": "📋 基准数据集：**{pairs}** 条标注方面-情感对，覆盖 **{reviews}** 条独立评论，涉及 12+ 个方面类别。",

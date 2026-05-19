@@ -322,19 +322,45 @@ with tab1:
                 label    = vader_result["label"]
                 compound = vader_result["compound"]
                 lcolor   = {"positive": "#22c55e", "negative": "#ef4444", "neutral": "#94a3b8"}[label]
+
+                # ── Single overall label (intentionally plain/muted) ──
                 st.markdown(
-                    f'<div class="vader-card">'
+                    f'<div class="vader-card" style="margin-bottom:1rem;">'
                     f'<div class="vader-label">{t("tab1_vader_only")}</div>'
-                    f'<div class="vader-value" style="color:{lcolor};">{label.upper()}</div>'
-                    f'<div style="color:#64748b;font-size:.9rem;">Compound Score: {compound:+.4f}</div>'
-                    f'<div class="vader-limit">{t("tab1_vader_limit")}</div>'
+                    f'<div class="vader-value" style="color:{lcolor};font-size:2.2rem;">{label.upper()}</div>'
+                    f'<div style="color:#475569;font-size:.85rem;margin-top:.4rem;">Compound: {compound:+.4f}</div>'
                     f'</div>',
                     unsafe_allow_html=True,
                 )
-                st.plotly_chart(vader_gauge(compound), use_container_width=True,
-                               config={"displayModeBar": False})
+
+                # ── What VADER cannot tell you (per detected aspect) ──
                 st.markdown(
-                    f'<div class="callout-warn"><b>{t("tab1_vader_warn_title")}</b><br>'
+                    f'<div style="font-size:.78rem;font-weight:600;color:#64748b;'
+                    f'text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;">'
+                    f'{t("tab1_vader_blind_spots")}</div>',
+                    unsafe_allow_html=True,
+                )
+                detected_aspects = absa_result.get("aspects", [])
+                if detected_aspects:
+                    rows_html = "".join(
+                        f'<div style="display:flex;justify-content:space-between;align-items:center;'
+                        f'padding:.45rem .7rem;margin-bottom:.3rem;'
+                        f'background:rgba(255,255,255,0.03);border-radius:6px;">'
+                        f'<span style="color:#64748b;font-size:.88rem;">📌 {a["name"].replace("_"," ").title()}</span>'
+                        f'<span style="color:#ef4444;font-size:.8rem;font-weight:600;">❌ Unknown</span>'
+                        f'</div>'
+                        for a in detected_aspects
+                    )
+                    st.markdown(rows_html, unsafe_allow_html=True)
+                else:
+                    st.markdown(
+                        '<div style="color:#475569;font-size:.85rem;padding:.5rem;">No aspect data available.</div>',
+                        unsafe_allow_html=True,
+                    )
+
+                st.markdown(
+                    f'<div class="callout-warn" style="margin-top:1rem;">'
+                    f'<b>{t("tab1_vader_warn_title")}</b><br>'
                     f'{t("tab1_vader_warn_body")}</div>',
                     unsafe_allow_html=True,
                 )
@@ -537,18 +563,49 @@ with tab4:
     labeled_df     = load_labeled_data()
     unique_reviews = list(dict.fromkeys(r.strip().strip('"') for r in labeled_df["review"]))
 
-    st.info(t("tab4_info").format(pairs=len(labeled_df), reviews=len(unique_reviews)))
+    # ── Always-visible: Methodology overview ──────────────────────────────────
+    st.markdown(f'<div class="section-header">{t("tab4_methodology_header")}</div>',
+                unsafe_allow_html=True)
+    m1, m2, m3, m4 = st.columns(4)
+    for col, icon, step, desc in [
+        (m1, "📋", t("tab4_step1_title"), t("tab4_step1_desc").format(n=len(labeled_df))),
+        (m2, "🤖", t("tab4_step2_title"), t("tab4_step2_desc")),
+        (m3, "📊", t("tab4_step3_title"), t("tab4_step3_desc")),
+        (m4, "⚡", t("tab4_step4_title"), t("tab4_step4_desc")),
+    ]:
+        with col:
+            st.markdown(
+                f'<div style="background:rgba(30,27,75,.6);border:1px solid rgba(139,92,246,.2);'
+                f'border-radius:10px;padding:1rem;text-align:center;height:140px;">'
+                f'<div style="font-size:1.6rem;">{icon}</div>'
+                f'<div style="font-size:.85rem;font-weight:600;color:#c4b5fd;margin:.4rem 0 .3rem;">{step}</div>'
+                f'<div style="font-size:.78rem;color:#64748b;line-height:1.4;">{desc}</div>'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+
+    st.markdown("---")
+
+    # ── Dataset info + expander ───────────────────────────────────────────────
+    col_info, col_dl = st.columns([3, 1])
+    with col_info:
+        st.info(t("tab4_info").format(pairs=len(labeled_df), reviews=len(unique_reviews)))
+    with col_dl:
+        st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+        with open(os.path.join(os.path.dirname(__file__), "labeled_test_data.csv"), "rb") as f:
+            st.download_button(t("tab4_download_test"), f, "labeled_test_data.csv", "text/csv",
+                               use_container_width=True)
 
     with st.expander(t("tab4_view_data"), expanded=False):
         st.dataframe(labeled_df, use_container_width=True, hide_index=True)
-        with open(os.path.join(os.path.dirname(__file__), "labeled_test_data.csv"), "rb") as f:
-            st.download_button(t("tab4_download_test"), f, "labeled_test_data.csv", "text/csv")
 
     st.markdown("---")
+
+    # ── Run button ────────────────────────────────────────────────────────────
     if not api_key:
         st.warning(t("tab4_api_warn"))
-
-    run_test = st.button(t("tab4_run_btn"), type="primary", disabled=not api_key)
+    run_test = st.button(t("tab4_run_btn"), type="primary", disabled=not api_key,
+                         use_container_width=False)
 
     if run_test and api_key:
         prog = st.progress(0, t("tab4_spinner"))
@@ -570,9 +627,9 @@ with tab4:
     vader_m = st.session_state.get("vader_metrics")
 
     if metrics and vader_m:
+        # ── KPI cards ────────────────────────────────────────────────────────
         st.markdown("---")
         st.markdown(t("tab4_results_title"))
-
         k1, k2, k3, k4 = st.columns(4)
         for col, val, lbl, color in [
             (k1, f"{metrics['aspect_detection_rate']:.1%}", t("tab4_kpi_detect"), "#a78bfa"),
@@ -587,16 +644,16 @@ with tab4:
                     unsafe_allow_html=True,
                 )
 
+        # ── F1 comparison chart ───────────────────────────────────────────────
         st.markdown("---")
         st.markdown(t("tab4_metrics_title"))
-
         classes  = ["positive", "negative", "neutral"]
         absa_f1  = [metrics["per_sentiment_metrics"][c]["f1"] for c in classes]
         vader_f1 = [vader_m["per_sentiment_metrics"][c]["f1"] for c in classes]
         fig = go.Figure(data=[
             go.Bar(name="SentiSight ABSA", x=classes, y=absa_f1,  marker_color="#a78bfa",
                    text=[f"{v:.2f}" for v in absa_f1],  textposition="outside"),
-            go.Bar(name="VADER",           x=classes, y=vader_f1, marker_color="#475569",
+            go.Bar(name="VADER",           x=classes, y=vader_f1, marker_color="#334155",
                    text=[f"{v:.2f}" for v in vader_f1], textposition="outside"),
         ])
         fig.update_layout(
@@ -605,10 +662,11 @@ with tab4:
             font=dict(color="#cbd5e1"),
             yaxis=dict(range=[0,1.15], title="F1 Score", gridcolor="rgba(255,255,255,0.07)"),
             legend=dict(bgcolor="rgba(0,0,0,0)"),
-            height=340, margin=dict(t=30,b=30),
+            height=320, margin=dict(t=30,b=30),
         )
         st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
+        # ── Per-class metrics table ───────────────────────────────────────────
         rows = []
         for cls in classes:
             am = metrics["per_sentiment_metrics"][cls]
@@ -625,10 +683,12 @@ with tab4:
             })
         st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
+        # ── Per-aspect detail ─────────────────────────────────────────────────
         st.markdown("---")
         st.markdown(t("tab4_detail_title"))
         st.dataframe(pd.DataFrame(metrics["detail_rows"]), use_container_width=True, hide_index=True)
 
+        # ── Summary callout ───────────────────────────────────────────────────
         st.markdown("---")
         st.markdown(
             f'<div class="callout">'
@@ -644,12 +704,15 @@ with tab4:
             unsafe_allow_html=True,
         )
     else:
+        # ── Empty state: prominent CTA ────────────────────────────────────────
         st.markdown(
-            f'<div style="background:rgba(30,27,75,.5);border:1px solid rgba(139,92,246,.2);'
-            f'border-radius:12px;padding:2rem;text-align:center;color:#94a3b8;">'
-            f'<div style="font-size:2rem;">🧪</div>'
-            f'<div style="margin-top:.5rem;">{t("tab4_placeholder")}</div>'
-            f'<div style="font-size:.85rem;margin-top:.5rem;">{t("tab4_placeholder_sub")}</div>'
+            f'<div style="background:rgba(109,40,217,.08);border:1px dashed rgba(139,92,246,.4);'
+            f'border-radius:14px;padding:2.5rem;text-align:center;margin-top:.5rem;">'
+            f'<div style="font-size:2.8rem;margin-bottom:.6rem;">🧪</div>'
+            f'<div style="font-size:1.05rem;font-weight:600;color:#c4b5fd;margin-bottom:.4rem;">'
+            f'{t("tab4_placeholder")}</div>'
+            f'<div style="font-size:.85rem;color:#64748b;max-width:500px;margin:0 auto;">'
+            f'{t("tab4_placeholder_sub")}</div>'
             f'</div>',
             unsafe_allow_html=True,
         )
