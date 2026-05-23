@@ -4,28 +4,28 @@ review,aspect,expected_sentiment
 "Amazing product quality and great customer service! However, it's a bit overpriced.",quality,positive
 "Amazing product quality and great customer service! However, it's a bit overpriced.",customer_service,positive
 "Amazing product quality and great customer service! However, it's a bit overpriced.",price,negative
-"The food taste was excellent but the restaurant was very noisy and dirty.",taste,positive
-"The food taste was excellent but the restaurant was very noisy and dirty.",ambiance,negative
+The food taste was excellent but the restaurant was very noisy and dirty.,taste,positive
+The food taste was excellent but the restaurant was very noisy and dirty.,ambiance,negative
 "Super easy to use app, but it crashes frequently. Support team was helpful though.",usability,positive
 "Super easy to use app, but it crashes frequently. Support team was helpful though.",reliability,negative
 "Super easy to use app, but it crashes frequently. Support team was helpful though.",customer_service,positive
-"Looks beautiful in photos but the actual fabric feels cheap and uncomfortable.",design,positive
-"Looks beautiful in photos but the actual fabric feels cheap and uncomfortable.",quality,negative
-"Absolutely love the battery life on this phone! The camera could be better though.",battery_life,positive
-"Absolutely love the battery life on this phone! The camera could be better though.",camera,negative
+Looks beautiful in photos but the actual fabric feels cheap and uncomfortable.,design,positive
+Looks beautiful in photos but the actual fabric feels cheap and uncomfortable.,quality,negative
+Absolutely love the battery life on this phone! The camera could be better though.,battery_life,positive
+Absolutely love the battery life on this phone! The camera could be better though.,camera,negative
 "Fast shipping, great price, and the product works exactly as described.",delivery,positive
 "Fast shipping, great price, and the product works exactly as described.",price,positive
 "Fast shipping, great price, and the product works exactly as described.",quality,positive
-"The build quality is terrible. It broke after two weeks. Customer service ignored me.",quality,negative
-"The build quality is terrible. It broke after two weeks. Customer service ignored me.",customer_service,negative
+The build quality is terrible. It broke after two weeks. Customer service ignored me.,quality,negative
+The build quality is terrible. It broke after two weeks. Customer service ignored me.,customer_service,negative
 "The hotel room was clean and comfortable, but the breakfast was overpriced and bland.",cleanliness,positive
 "The hotel room was clean and comfortable, but the breakfast was overpriced and bland.",comfort,positive
 "The hotel room was clean and comfortable, but the breakfast was overpriced and bland.",price,negative
 "The hotel room was clean and comfortable, but the breakfast was overpriced and bland.",taste,negative
-"The staff were incredibly friendly and helpful. Waiting time was a bit long though.",customer_service,positive
-"The staff were incredibly friendly and helpful. Waiting time was a bit long though.",wait_time,negative
+The staff were incredibly friendly and helpful. Waiting time was a bit long though.,customer_service,positive
+The staff were incredibly friendly and helpful. Waiting time was a bit long though.,wait_time,negative
 "The app UI is beautiful and intuitive, but the loading speed is frustratingly slow.",design,positive
 "The app UI is beautiful and intuitive, but the loading speed is frustratingly slow.",usability,positive
 "The app UI is beautiful and intuitive, but the loading speed is frustratingly slow.",performance,negative
-"Outstanding customer service resolved my issue immediately. The product itself is just average.",customer_service,positive
-"Outstanding customer service resolved my issue immediately. The product itself is just average.",quality,neutral
+Outstanding customer service resolved my issue immediately. The product itself is just average.,customer_service,positive
+Outstanding customer service resolved my issue immediately. The product itself is just average.,quality,neutral
