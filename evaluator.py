@@ -5,9 +5,11 @@ Calculates aspect detection rate, sentiment accuracy, precision, recall, F1.
 from __future__ import annotations
 import os
 import pandas as pd
+import streamlit as st
 from collections import defaultdict
 
 
+@st.cache_data(show_spinner=False)
 def load_labeled_data(path: str | None = None) -> pd.DataFrame:
     if path is None:
         path = os.path.join(os.path.dirname(__file__), "labeled_test_data.csv")

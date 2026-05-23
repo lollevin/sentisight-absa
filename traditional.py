@@ -1,8 +1,10 @@
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import streamlit as st
 
 _analyzer = SentimentIntensityAnalyzer()
 
 
+@st.cache_data(show_spinner=False)
 def analyze_vader(text: str) -> dict:
     scores = _analyzer.polarity_scores(text)
     compound = scores["compound"]

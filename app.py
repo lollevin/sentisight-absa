@@ -19,6 +19,70 @@ from visualizer import (
 
 load_dotenv()
 
+# ── Theme definitions ──────────────────────────────────────────────────────────
+THEMES = {
+    "dark": {
+        "bg": "#0f1117", "card_bg": "rgba(30,27,75,.8)", "card_border": "rgba(139,92,246,.2)",
+        "text": "#e2e8f0", "text_muted": "#94a3b8", "text_dim": "#64748b",
+        "accent": "#a78bfa", "accent_strong": "#c4b5fd", "accent_bg": "rgba(30,27,75,.4)",
+        "positive": "#22c55e", "negative": "#ef4444", "neutral": "#94a3b8",
+        "hero_grad": "linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 70%, #6d28d9 100%)",
+        "sidebar_bg": "#0d1117", "sidebar_border": "rgba(139,92,246,.15)",
+        "tab_bg": "rgba(30,27,75,.4)", "tab_active": "rgba(109,40,217,.5)", "tab_text": "#94a3b8", "tab_active_text": "#e2e8f0",
+        "kpi_grad": "linear-gradient(135deg,rgba(30,27,75,.8),rgba(49,46,129,.5))",
+        "btn_grad": "linear-gradient(135deg,#6d28d9,#7c3aed)",
+        "callout_bg": "rgba(34,197,94,.08)", "callout_border": "rgba(34,197,94,.3)", "callout_text": "#86efac",
+        "callout_warn_bg": "rgba(239,68,68,.08)", "callout_warn_border": "rgba(239,68,68,.3)", "callout_warn_text": "#fca5a5",
+        "expander_bg": "rgba(30,27,75,.4)",
+        "conf_bar_bg": "#1e293b",
+        "vader_bg": "rgba(15,23,42,.6)", "vader_border": "rgba(100,116,139,.2)",
+        "problem_bg": "rgba(239,68,68,.08)", "problem_border": "rgba(239,68,68,.25)",
+        "solution_bg": "rgba(34,197,94,.08)", "solution_border": "rgba(34,197,94,.25)",
+        "row_bg": "rgba(255,255,255,0.03)",
+        "chart_paper": "rgba(15,17,26,0)", "chart_plot": "rgba(255,255,255,0.04)",
+        "sug_bg": "rgba(30,27,75,.5)",
+        "pos_card_bg": "rgba(34,197,94,.08)", "neg_card_bg": "rgba(239,68,68,.08)", "neu_card_bg": "rgba(148,163,184,.08)",
+        "pos_badge_bg": "#166534", "pos_badge_text": "#86efac",
+        "neg_badge_bg": "#7f1d1d", "neg_badge_text": "#fca5a5",
+        "neu_badge_bg": "#1e293b", "neu_badge_text": "#94a3b8",
+        "kw_badge_bg": "rgba(109,40,217,.3)", "kw_badge_text": "#c4b5fd",
+        "api_ready_bg": "rgba(34,197,94,.1)", "api_ready_border": "rgba(34,197,94,.3)",
+        "lang_btn_bg": "rgba(255,255,255,0.08)", "lang_btn_border": "rgba(139,92,246,0.4)", "lang_btn_text": "#c4b5fd",
+        "lang_btn_active_bg": "rgba(109,40,217,0.6)", "lang_btn_active_border": "#7c3aed", "lang_btn_active_text": "#f8fafc",
+        "hero_border": "rgba(139,92,246,0.3)",
+    },
+    "light": {
+        "bg": "#f8fafc", "card_bg": "#ffffff", "card_border": "rgba(99,102,241,.25)",
+        "text": "#1e293b", "text_muted": "#475569", "text_dim": "#64748b",
+        "accent": "#6366f1", "accent_strong": "#4f46e5", "accent_bg": "rgba(99,102,241,.08)",
+        "positive": "#16a34a", "negative": "#dc2626", "neutral": "#64748b",
+        "hero_grad": "linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 40%, #a5b4fc 70%, #818cf8 100%)",
+        "sidebar_bg": "#ffffff", "sidebar_border": "rgba(99,102,241,.15)",
+        "tab_bg": "rgba(99,102,241,.08)", "tab_active": "rgba(99,102,241,.2)", "tab_text": "#64748b", "tab_active_text": "#1e293b",
+        "kpi_grad": "linear-gradient(135deg,#eef2ff,#e0e7ff)",
+        "btn_grad": "linear-gradient(135deg,#6366f1,#818cf8)",
+        "callout_bg": "rgba(22,163,74,.08)", "callout_border": "rgba(22,163,74,.3)", "callout_text": "#166534",
+        "callout_warn_bg": "rgba(220,38,38,.08)", "callout_warn_border": "rgba(220,38,38,.3)", "callout_warn_text": "#991b1b",
+        "expander_bg": "rgba(99,102,241,.04)",
+        "conf_bar_bg": "#e2e8f0",
+        "vader_bg": "#f1f5f9", "vader_border": "rgba(100,116,139,.25)",
+        "problem_bg": "rgba(220,38,38,.06)", "problem_border": "rgba(220,38,38,.2)",
+        "solution_bg": "rgba(22,163,74,.06)", "solution_border": "rgba(22,163,74,.2)",
+        "row_bg": "rgba(0,0,0,0.02)",
+        "chart_paper": "rgba(255,255,255,0)", "chart_plot": "rgba(0,0,0,0.03)",
+        "sug_bg": "#f1f5f9",
+        "pos_card_bg": "rgba(22,163,74,.06)", "neg_card_bg": "rgba(220,38,38,.06)", "neu_card_bg": "rgba(100,116,139,.06)",
+        "pos_badge_bg": "#dcfce7", "pos_badge_text": "#166534",
+        "neg_badge_bg": "#fee2e2", "neg_badge_text": "#991b1b",
+        "neu_badge_bg": "#f1f5f9", "neu_badge_text": "#475569",
+        "kw_badge_bg": "rgba(99,102,241,.15)", "kw_badge_text": "#4338ca",
+        "api_ready_bg": "rgba(22,163,74,.1)", "api_ready_border": "rgba(22,163,74,.3)",
+        "lang_btn_bg": "rgba(0,0,0,0.06)", "lang_btn_border": "rgba(99,102,241,0.3)", "lang_btn_text": "#6366f1",
+        "lang_btn_active_bg": "rgba(99,102,241,0.2)", "lang_btn_active_border": "#6366f1", "lang_btn_active_text": "#1e293b",
+        "hero_border": "rgba(99,102,241,0.25)",
+    },
+}
+
 def _get_default_api_key(provider: str = "DeepSeek") -> str:
     """Read API key from .env (local) or st.secrets (Streamlit Cloud)."""
     env_map = {
@@ -56,96 +120,122 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ─── Language init ─────────────────────────────────────────────────────────────
+# ─── Language + Theme init ─────────────────────────────────────────────────────
 if "lang" not in st.session_state:
     st.session_state["lang"] = "EN"
+if "theme" not in st.session_state:
+    st.session_state["theme"] = "dark"
 
-# ─── Custom CSS ────────────────────────────────────────────────────────────────
-st.markdown(
-    """
+
+def _theme_css() -> str:
+    """Generate CSS with current theme colors injected."""
+    t = THEMES[st.session_state.get("theme", "dark")]
+    return f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-.stApp { background: #0f1117; }
+html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
+.stApp {{ background: {t["bg"]}; }}
 
-.hero-banner {
-    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 70%, #6d28d9 100%);
+.hero-banner {{
+    background: {t["hero_grad"]};
     border-radius: 16px; padding: 2.2rem 2.5rem 1.6rem;
     margin-bottom: 1.2rem;
-    border: 1px solid rgba(139,92,246,0.3);
-    box-shadow: 0 8px 40px rgba(109,40,217,0.25);
-}
-.hero-title   { font-size:2.4rem; font-weight:700; color:#f8fafc; margin:0; letter-spacing:-0.5px; }
-.hero-sub-title { font-size:1.3rem; font-weight:600; color:#c4b5fd; margin-top:0.15rem; }
-.hero-desc    { font-size:0.95rem; color:#a78bfa; margin-top:0.4rem; }
+    border: 1px solid {t["hero_border"]};
+    box-shadow: 0 8px 40px rgba(99,102,241,0.15);
+}}
+.hero-title   {{ font-size:2.4rem; font-weight:700; color:{t["text"]}; margin:0; letter-spacing:-0.5px; }}
+.hero-sub-title {{ font-size:1.3rem; font-weight:600; color:{t["accent_strong"]}; margin-top:0.15rem; }}
+.hero-desc    {{ font-size:0.95rem; color:{t["text_muted"]}; margin-top:0.4rem; }}
 
-/* Lang toggle buttons */
-.lang-btn-row { display:flex; gap:8px; justify-content:flex-end; margin-bottom:0.5rem; }
-.lang-btn {
-    background: rgba(255,255,255,0.08); border:1px solid rgba(139,92,246,0.4);
+.lang-btn-row {{ display:flex; gap:8px; justify-content:flex-end; margin-bottom:0.5rem; }}
+.lang-btn {{
+    background: {t["lang_btn_bg"]}; border:1px solid {t["lang_btn_border"]};
     border-radius:8px; padding:4px 14px; font-size:0.82rem; font-weight:600;
-    color:#c4b5fd; cursor:pointer; transition:all .15s;
-}
-.lang-btn.active { background:rgba(109,40,217,0.6); border-color:#7c3aed; color:#f8fafc; }
+    color:{t["lang_btn_text"]}; cursor:pointer; transition:all .15s;
+}}
+.lang-btn.active {{ background:{t["lang_btn_active_bg"]}; border-color:{t["lang_btn_active_border"]}; color:{t["lang_btn_active_text"]}; }}
 
-.kpi-card {
-    background: linear-gradient(135deg,rgba(30,27,75,.8),rgba(49,46,129,.5));
-    border:1px solid rgba(139,92,246,.2); border-radius:12px;
+.kpi-card {{
+    background: {t["kpi_grad"]};
+    border:1px solid {t["card_border"]}; border-radius:12px;
     padding:1.2rem 1.5rem; text-align:center;
-}
-.kpi-value { font-size:2rem; font-weight:700; color:#a78bfa; }
-.kpi-label { font-size:0.78rem; color:#94a3b8; text-transform:uppercase; letter-spacing:.08em; }
+}}
+.kpi-value {{ font-size:2rem; font-weight:700; color:{t["accent"]}; }}
+.kpi-label {{ font-size:0.85rem; color:{t["text_dim"]}; text-transform:uppercase; letter-spacing:.08em; }}
 
-.aspect-card  { border-radius:10px; padding:1rem 1.2rem; margin-bottom:.7rem; border-left:4px solid; }
-.aspect-positive { background:rgba(34,197,94,.08);  border-color:#22c55e; }
-.aspect-negative { background:rgba(239,68,68,.08);  border-color:#ef4444; }
-.aspect-neutral  { background:rgba(148,163,184,.08); border-color:#94a3b8; }
-.aspect-name  { font-size:1rem; font-weight:600; color:#e2e8f0; }
-.aspect-quote { font-size:.85rem; color:#94a3b8; font-style:italic; margin-top:.3rem; }
-.aspect-badge-pos { background:#166534; color:#86efac; border-radius:6px; padding:2px 10px; font-size:.78rem; font-weight:600; }
-.aspect-badge-neg { background:#7f1d1d; color:#fca5a5; border-radius:6px; padding:2px 10px; font-size:.78rem; font-weight:600; }
-.aspect-badge-neu { background:#1e293b; color:#94a3b8; border-radius:6px; padding:2px 10px; font-size:.78rem; font-weight:600; }
-.conf-bar  { height:6px; border-radius:3px; background:#1e293b; margin-top:6px; }
-.conf-fill { height:6px; border-radius:3px; }
+.aspect-card  {{ border-radius:10px; padding:1rem 1.2rem; margin-bottom:.7rem; border-left:4px solid; }}
+.aspect-positive {{ background:{t["pos_card_bg"]};  border-color:{t["positive"]}; }}
+.aspect-negative {{ background:{t["neg_card_bg"]};  border-color:{t["negative"]}; }}
+.aspect-neutral  {{ background:{t["neu_card_bg"]}; border-color:{t["neutral"]}; }}
+.aspect-name  {{ font-size:1rem; font-weight:600; color:{t["text"]}; }}
+.aspect-quote {{ font-size:.9rem; color:{t["text_muted"]}; font-style:italic; margin-top:.3rem; }}
+.aspect-badge-pos {{ background:{t["pos_badge_bg"]}; color:{t["pos_badge_text"]}; border-radius:6px; padding:2px 10px; font-size:.78rem; font-weight:600; }}
+.aspect-badge-neg {{ background:{t["neg_badge_bg"]}; color:{t["neg_badge_text"]}; border-radius:6px; padding:2px 10px; font-size:.78rem; font-weight:600; }}
+.aspect-badge-neu {{ background:{t["neu_badge_bg"]}; color:{t["neu_badge_text"]}; border-radius:6px; padding:2px 10px; font-size:.78rem; font-weight:600; }}
+.conf-bar  {{ height:6px; border-radius:3px; background:{t["conf_bar_bg"]}; margin-top:6px; }}
+.conf-fill {{ height:6px; border-radius:3px; }}
 
-.sug-card {
-    background:rgba(30,27,75,.5); border:1px solid rgba(139,92,246,.2);
+.sug-card {{
+    background:{t["sug_bg"]}; border:1px solid {t["card_border"]};
     border-radius:10px; padding:.9rem 1.2rem; margin-bottom:.5rem;
-    color:#e2e8f0; font-size:.92rem;
-}
-.section-header {
-    font-size:1rem; font-weight:600; color:#a78bfa;
+    color:{t["text"]}; font-size:.92rem;
+}}
+.section-header {{
+    font-size:1rem; font-weight:600; color:{t["accent"]};
     text-transform:uppercase; letter-spacing:.1em;
-    border-bottom:1px solid rgba(139,92,246,.2);
+    border-bottom:1px solid {t["card_border"]};
     padding-bottom:.4rem; margin-bottom:1rem;
-}
-.vader-card { background:rgba(15,23,42,.6); border:1px solid rgba(100,116,139,.2); border-radius:12px; padding:1.2rem; text-align:center; }
-.vader-label { font-size:.78rem; color:#64748b; text-transform:uppercase; letter-spacing:.1em; }
-.vader-value { font-size:1.6rem; font-weight:700; color:#64748b; margin:.3rem 0; }
-.vader-limit { font-size:.78rem; color:#475569; margin-top:.5rem; font-style:italic; }
-.callout      { background:rgba(34,197,94,.08); border:1px solid rgba(34,197,94,.3); border-radius:10px; padding:1rem 1.5rem; color:#86efac; font-size:.92rem; }
-.callout-warn { background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.3); border-radius:10px; padding:1rem 1.5rem; color:#fca5a5; font-size:.92rem; }
+}}
+.vader-card {{ background:{t["vader_bg"]}; border:1px solid {t["vader_border"]}; border-radius:12px; padding:1.2rem; text-align:center; }}
+.vader-label {{ font-size:.85rem; color:{t["text_dim"]}; text-transform:uppercase; letter-spacing:.1em; }}
+.vader-value {{ font-size:1.6rem; font-weight:700; color:{t["text_dim"]}; margin:.3rem 0; }}
+.vader-limit {{ font-size:.78rem; color:{t["text_dim"]}; margin-top:.5rem; font-style:italic; }}
+.callout      {{ background:{t["callout_bg"]}; border:1px solid {t["callout_border"]}; border-radius:10px; padding:1rem 1.5rem; color:{t["callout_text"]}; font-size:.92rem; }}
+.callout-warn {{ background:{t["callout_warn_bg"]}; border:1px solid {t["callout_warn_border"]}; border-radius:10px; padding:1rem 1.5rem; color:{t["callout_warn_text"]}; font-size:.92rem; }}
 
-#MainMenu { visibility:hidden; } footer { visibility:hidden; } header { visibility:hidden; }
+#MainMenu {{ visibility:hidden; }} footer {{ visibility:hidden; }} header {{ visibility:hidden; }}
 
-.stTabs [data-baseweb="tab-list"] { background:rgba(30,27,75,.4); border-radius:10px; padding:4px; }
-.stTabs [data-baseweb="tab"]      { border-radius:8px; color:#94a3b8; padding:.5rem 1.2rem; }
-.stTabs [aria-selected="true"]    { background:rgba(109,40,217,.5); color:#e2e8f0; }
+.stTabs [data-baseweb="tab-list"] {{ background:{t["tab_bg"]}; border-radius:10px; padding:4px; }}
+.stTabs [data-baseweb="tab"]      {{ border-radius:8px; color:{t["tab_text"]}; padding:.5rem 1.2rem; }}
+.stTabs [aria-selected="true"]    {{ background:{t["tab_active"]}; color:{t["tab_active_text"]}; }}
 
-[data-testid="stSidebar"] { background:#0d1117; border-right:1px solid rgba(139,92,246,.15); }
+[data-testid="stSidebar"] {{ background:{t["sidebar_bg"]}; border-right:1px solid {t["sidebar_border"]}; }}
 
-button[kind="primary"] {
-    background:linear-gradient(135deg,#6d28d9,#7c3aed);
+button[kind="primary"] {{
+    background:{t["btn_grad"]};
     border:none; border-radius:8px; font-weight:600; letter-spacing:.03em;
-}
+}}
+
+/* Override streamlit default text colors for light mode */
+.stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown li {{ color:{t["text_muted"]} !important; }}
+h1, h2, h3, h4, h5, h6, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {{ color:{t["text"]} !important; }}
+.stCaption {{ color:{t["text_dim"]} !important; }}
 </style>
-""",
-    unsafe_allow_html=True,
-)
+"""
+
+
+# ─── Custom CSS ────────────────────────────────────────────────────────────────
+st.markdown(_theme_css(), unsafe_allow_html=True)
 
 # ─── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown(f"### {t('sidebar_title')}")
+    st.markdown("---")
+
+    # ── Theme toggle ──────────────────────────────────────────────────────
+    themes = {"dark": "🌙 深色模式", "light": "☀️ 浅色模式"}
+    theme_choice = st.radio(
+        "🎨 主题",
+        list(themes.keys()),
+        format_func=lambda k: themes[k],
+        index=list(themes.keys()).index(st.session_state.get("theme", "dark")),
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+    if theme_choice != st.session_state.get("theme"):
+        st.session_state["theme"] = theme_choice
+        st.rerun()
+
     st.markdown("---")
     st.markdown(f"**{t('sidebar_api_config')}**")
 
@@ -190,6 +280,19 @@ with st.sidebar:
     st.markdown("---")
     st.markdown(t("sidebar_about"))
     st.caption(t("sidebar_about_text"))
+
+# ─── Cached helpers ────────────────────────────────────────────────────────────
+@st.cache_data(show_spinner=False)
+def _cached_demo_vader() -> list[dict]:
+    DEMO_REVIEWS = [
+        "The delivery speed is very fast, but the packaging quality is very poor.",
+        "Amazing product quality and great customer service! However, it's a bit overpriced.",
+        "The food taste was excellent but the restaurant was very noisy and dirty.",
+        "Super easy to use, but it crashed twice. Support team was very responsive.",
+        "Looks beautiful in photos but the actual fabric feels cheap and uncomfortable.",
+    ]
+    return [analyze_vader(r) for r in DEMO_REVIEWS]
+
 
 # ─── Helpers ───────────────────────────────────────────────────────────────────
 def sentiment_badge(sentiment: str) -> str:
@@ -257,23 +360,24 @@ with col_hero:
 # ─── Problem Statement ─────────────────────────────────────────────────────────
 with st.expander(t("problem_expander"), expanded=False):
     cp1, cp2 = st.columns(2)
+    tm = THEMES[st.session_state.get("theme", "dark")]
     with cp1:
         st.markdown(
-            f'<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);'
+            f'<div style="background:{tm["problem_bg"]};border:1px solid {tm["problem_border"]};'
             f'border-radius:10px;padding:1.2rem;">'
-            f'<div style="font-size:.8rem;font-weight:600;color:#fca5a5;text-transform:uppercase;'
+            f'<div style="font-size:.8rem;font-weight:600;color:{tm["callout_warn_text"]};text-transform:uppercase;'
             f'letter-spacing:.1em;margin-bottom:.6rem;">{t("problem_title")}</div>'
-            f'<div style="color:#e2e8f0;font-size:.9rem;line-height:1.6;">{t("problem_body")}</div>'
+            f'<div style="color:{tm["text"]};font-size:.9rem;line-height:1.6;">{t("problem_body")}</div>'
             f'</div>',
             unsafe_allow_html=True,
         )
     with cp2:
         st.markdown(
-            f'<div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);'
+            f'<div style="background:{tm["solution_bg"]};border:1px solid {tm["solution_border"]};'
             f'border-radius:10px;padding:1.2rem;">'
-            f'<div style="font-size:.8rem;font-weight:600;color:#86efac;text-transform:uppercase;'
+            f'<div style="font-size:.8rem;font-weight:600;color:{tm["callout_text"]};text-transform:uppercase;'
             f'letter-spacing:.1em;margin-bottom:.6rem;">{t("solution_title")}</div>'
-            f'<div style="color:#e2e8f0;font-size:.9rem;line-height:1.6;">{t("solution_body")}</div>'
+            f'<div style="color:{tm["text"]};font-size:.9rem;line-height:1.6;">{t("solution_body")}</div>'
             f'</div>',
             unsafe_allow_html=True,
         )
@@ -369,7 +473,7 @@ with tab1:
                     f'<div class="vader-card" style="margin-bottom:1rem;">'
                     f'<div class="vader-label">{t("tab1_vader_only")}</div>'
                     f'<div class="vader-value" style="color:{lcolor};font-size:2.2rem;">{label.upper()}</div>'
-                    f'<div style="color:#475569;font-size:.85rem;margin-top:.4rem;">Compound: {compound:+.4f}</div>'
+                    f'<div style="color:{tm["text_dim"]};font-size:.85rem;margin-top:.4rem;">Compound: {compound:+.4f}</div>'
                     f'</div>',
                     unsafe_allow_html=True,
                 )
@@ -437,9 +541,15 @@ with tab2:
                     prog_bar.progress(done / total,
                                       t("tab2_analyzing").format(done=done, total=total))
 
-                with st.spinner(t("tab2_processing")):
-                    absa_res   = analyze_batch(reviews, provider, api_key, model, upd)
-                    vader_res  = analyze_batch_vader(reviews)
+                try:
+                    with st.spinner(t("tab2_processing")):
+                        absa_res   = analyze_batch(reviews, provider, api_key, model, upd)
+                        vader_res  = analyze_batch_vader(reviews)
+                except Exception as e:
+                    prog_bar.empty()
+                    st.error(f"❌ 批量分析失败：{e}\n\n"
+                             f"请检查 API 密钥是否有效，或尝试切换服务商。")
+                    st.stop()
                 prog_bar.empty()
 
                 total_r   = len(absa_res)
@@ -452,18 +562,14 @@ with tab2:
                     top_asp = Counter(a["name"] for a in all_asp).most_common(1)[0][0].replace("_", " ").title()
 
                 k1, k2, k3, k4 = st.columns(4)
-                for col, val, lbl in [
-                    (k1, str(total_r), t("tab2_kpi_total")),
-                    (k2, f"{pos_count/total_r:.0%}", t("tab2_kpi_pos")),
-                    (k3, f"{neg_count/total_r:.0%}", t("tab2_kpi_neg")),
-                    (k4, top_asp, t("tab2_kpi_top")),
-                ]:
-                    with col:
-                        st.markdown(
-                            f'<div class="kpi-card"><div class="kpi-value">{val}</div>'
-                            f'<div class="kpi-label">{lbl}</div></div>',
-                            unsafe_allow_html=True,
-                        )
+                with k1:
+                    st.metric(t("tab2_kpi_total"), str(total_r))
+                with k2:
+                    st.metric(t("tab2_kpi_pos"), f"{pos_count/total_r:.0%}")
+                with k3:
+                    st.metric(t("tab2_kpi_neg"), f"{neg_count/total_r:.0%}")
+                with k4:
+                    st.metric(t("tab2_kpi_top"), top_asp)
 
                 st.markdown("---")
                 c1b, c2b = st.columns(2)
@@ -540,7 +646,7 @@ with tab3:
         "Super easy to use, but it crashed twice. Support team was very responsive.",
         "Looks beautiful in photos but the actual fabric feels cheap and uncomfortable.",
     ]
-    DEMO_VADER = [analyze_vader(r) for r in DEMO_REVIEWS]
+    DEMO_VADER = _cached_demo_vader()
     DEMO_ABSA_STATIC = [
         {"aspects": [{"name":"delivery","sentiment":"positive","confidence":.97,"quote":"delivery speed is very fast"},
                      {"name":"packaging","sentiment":"negative","confidence":.95,"quote":"packaging quality is very poor"}],
@@ -568,7 +674,7 @@ with tab3:
 
     for i, (review, vader, absa) in enumerate(zip(DEMO_REVIEWS, DEMO_VADER, DEMO_ABSA_STATIC)):
         with st.expander(f'{t("tab3_review_label").format(n=i+1)} "{review[:65]}..."', expanded=(i == 0)):
-            st.markdown(f'<div style="color:#cbd5e1;font-style:italic;margin-bottom:1rem;">"{review}"</div>',
+            st.markdown(f'<div style="color:{tm["text_muted"]};font-style:italic;margin-bottom:1rem;">"{review}"</div>',
                         unsafe_allow_html=True)
             ca, cv = st.columns(2)
             with ca:
@@ -585,7 +691,7 @@ with tab3:
                     f'<div class="vader-card">'
                     f'<div class="vader-label">{t("tab3_vader_only_label")}</div>'
                     f'<div class="vader-value" style="color:{color};">{label.upper()}</div>'
-                    f'<div style="color:#64748b;font-size:.85rem;">Compound: {vader["compound"]:+.4f}</div>'
+                    f'<div style="color:{tm["text_dim"]};font-size:.85rem;">Compound: {vader["compound"]:+.4f}</div>'
                     f'<div class="vader-limit">{t("tab3_vader_no_action")}</div>'
                     f'</div>',
                     unsafe_allow_html=True,
@@ -616,11 +722,11 @@ with tab4:
     ]:
         with col:
             st.markdown(
-                f'<div style="background:rgba(30,27,75,.6);border:1px solid rgba(139,92,246,.2);'
+                f'<div style="background:{tm["card_bg"]};border:1px solid {tm["card_border"]};'
                 f'border-radius:10px;padding:1rem;text-align:center;height:140px;">'
                 f'<div style="font-size:1.6rem;">{icon}</div>'
-                f'<div style="font-size:.85rem;font-weight:600;color:#c4b5fd;margin:.4rem 0 .3rem;">{step}</div>'
-                f'<div style="font-size:.78rem;color:#64748b;line-height:1.4;">{desc}</div>'
+                f'<div style="font-size:.85rem;font-weight:600;color:{tm["accent_strong"]};margin:.4rem 0 .3rem;">{step}</div>'
+                f'<div style="font-size:.78rem;color:{tm["text_dim"]};line-height:1.4;">{desc}</div>'
                 f'</div>',
                 unsafe_allow_html=True,
             )
@@ -654,36 +760,46 @@ with tab4:
         def upd_t(done, total):
             prog.progress(done / total, t("tab4_analyzing").format(done=done, total=total))
 
-        with st.spinner(t("tab4_spinner")):
-            absa_test  = analyze_batch(unique_reviews, provider, api_key, model, upd_t)
-            for r, rev in zip(absa_test, unique_reviews):
-                r["review"] = rev
-            vader_test = analyze_batch_vader(unique_reviews)
+        try:
+            with st.spinner(t("tab4_spinner")):
+                absa_test  = analyze_batch(unique_reviews, provider, api_key, model, upd_t)
+                for r, rev in zip(absa_test, unique_reviews):
+                    r["review"] = rev
+                vader_test = analyze_batch_vader(unique_reviews)
 
-        prog.empty()
-        st.session_state["eval_metrics"]  = evaluate_results(labeled_df, absa_test)
-        st.session_state["vader_metrics"] = vader_baseline_metrics(labeled_df, vader_test)
+            prog.empty()
+            st.session_state["eval_metrics"]  = evaluate_results(labeled_df, absa_test)
+            st.session_state["vader_metrics"] = vader_baseline_metrics(labeled_df, vader_test)
+        except Exception as e:
+            prog.empty()
+            st.error(f"❌ 评估失败，请检查以下内容：\n\n"
+                     f"1. API 密钥是否有效\n"
+                     f"2. 网络连接是否正常\n"
+                     f"3. API 服务商是否可用\n\n"
+                     f"错误详情：{e}")
 
     metrics = st.session_state.get("eval_metrics")
     vader_m = st.session_state.get("vader_metrics")
 
     if metrics and vader_m:
-        # ── KPI cards ────────────────────────────────────────────────────────
+        # ── KPI cards with st.metric ──────────────────────────────────────
         st.markdown("---")
         st.markdown(t("tab4_results_title"))
         k1, k2, k3, k4 = st.columns(4)
-        for col, val, lbl, color in [
-            (k1, f"{metrics['aspect_detection_rate']:.1%}", t("tab4_kpi_detect"), "#a78bfa"),
-            (k2, f"{metrics['sentiment_accuracy']:.1%}",   t("tab4_kpi_acc"),    "#22c55e"),
-            (k3, f"{metrics['overall_f1']:.2f}",           t("tab4_kpi_absa_f1"),"#38bdf8"),
-            (k4, f"{vader_m['overall_f1']:.2f}",           t("tab4_kpi_vader_f1"),"#64748b"),
-        ]:
-            with col:
-                st.markdown(
-                    f'<div class="kpi-card"><div class="kpi-value" style="color:{color};">{val}</div>'
-                    f'<div class="kpi-label">{lbl}</div></div>',
-                    unsafe_allow_html=True,
-                )
+        absa_f1 = metrics["overall_f1"]
+        vader_f1 = vader_m["overall_f1"]
+        with k1:
+            st.metric(t("tab4_kpi_detect"), f"{metrics['aspect_detection_rate']:.1%}")
+        with k2:
+            st.metric(t("tab4_kpi_acc"), f"{metrics['sentiment_accuracy']:.1%}")
+        with k3:
+            st.metric(t("tab4_kpi_absa_f1"), f"{absa_f1:.2f}",
+                      delta=f"{absa_f1 - vader_f1:+.2f} vs VADER",
+                      delta_color="normal")
+        with k4:
+            st.metric(t("tab4_kpi_vader_f1"), f"{vader_f1:.2f}",
+                      delta=f"{vader_f1 - absa_f1:+.2f} vs ABSA",
+                      delta_color="inverse")
 
         # ── F1 comparison chart ───────────────────────────────────────────────
         st.markdown("---")
@@ -747,12 +863,12 @@ with tab4:
     else:
         # ── Empty state: prominent CTA ────────────────────────────────────────
         st.markdown(
-            f'<div style="background:rgba(109,40,217,.08);border:1px dashed rgba(139,92,246,.4);'
+            f'<div style="background:{tm["accent_bg"]};border:1px dashed {tm["card_border"]};'
             f'border-radius:14px;padding:2.5rem;text-align:center;margin-top:.5rem;">'
             f'<div style="font-size:2.8rem;margin-bottom:.6rem;">🧪</div>'
-            f'<div style="font-size:1.05rem;font-weight:600;color:#c4b5fd;margin-bottom:.4rem;">'
+            f'<div style="font-size:1.05rem;font-weight:600;color:{tm["accent_strong"]};margin-bottom:.4rem;">'
             f'{t("tab4_placeholder")}</div>'
-            f'<div style="font-size:.85rem;color:#64748b;max-width:500px;margin:0 auto;">'
+            f'<div style="font-size:.85rem;color:{tm["text_dim"]};max-width:500px;margin:0 auto;">'
             f'{t("tab4_placeholder_sub")}</div>'
             f'</div>',
             unsafe_allow_html=True,
