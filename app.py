@@ -83,6 +83,11 @@ THEMES = {
     },
 }
 
+def _tc(key: str) -> str:
+    """Get a theme color for the current theme. Use in inline styles."""
+    return THEMES[st.session_state.get("theme", "dark")].get(key, "")
+
+
 def _get_default_api_key(provider: str = "DeepSeek") -> str:
     """Read API key from .env (local) or st.secrets (Streamlit Cloud)."""
     env_map = {
@@ -128,9 +133,14 @@ if "theme" not in st.session_state:
 
 
 def _theme_css() -> str:
-    """Generate CSS with current theme colors injected."""
+    """Generate CSS with current theme colors injected.
+    Light mode: Streamlit's native light base handles text colors; only custom components styled.
+    Dark mode: full dark override including Streamlit native widgets."""
     t = THEMES[st.session_state.get("theme", "dark")]
-    return f"""
+    is_dark = st.session_state.get("theme", "dark") == "dark"
+
+    # ── Shared custom component styles (both modes) ─────────────────────────
+    shared = f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
@@ -155,23 +165,15 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 }}
 .lang-btn.active {{ background:{t["lang_btn_active_bg"]}; border-color:{t["lang_btn_active_border"]}; color:{t["lang_btn_active_text"]}; }}
 
-.kpi-card {{
-    background: {t["kpi_grad"]};
-    border:1px solid {t["card_border"]}; border-radius:12px;
-    padding:1.2rem 1.5rem; text-align:center;
-}}
-.kpi-value {{ font-size:2rem; font-weight:700; color:{t["accent"]}; }}
-.kpi-label {{ font-size:0.85rem; color:{t["text_dim"]}; text-transform:uppercase; letter-spacing:.08em; }}
-
 .aspect-card  {{ border-radius:10px; padding:1rem 1.2rem; margin-bottom:.7rem; border-left:4px solid; }}
 .aspect-positive {{ background:{t["pos_card_bg"]};  border-color:{t["positive"]}; }}
 .aspect-negative {{ background:{t["neg_card_bg"]};  border-color:{t["negative"]}; }}
 .aspect-neutral  {{ background:{t["neu_card_bg"]}; border-color:{t["neutral"]}; }}
 .aspect-name  {{ font-size:1rem; font-weight:600; color:{t["text"]}; }}
 .aspect-quote {{ font-size:.9rem; color:{t["text_muted"]}; font-style:italic; margin-top:.3rem; }}
-.aspect-badge-pos {{ background:{t["pos_badge_bg"]}; color:{t["pos_badge_text"]}; border-radius:6px; padding:2px 10px; font-size:.78rem; font-weight:600; }}
-.aspect-badge-neg {{ background:{t["neg_badge_bg"]}; color:{t["neg_badge_text"]}; border-radius:6px; padding:2px 10px; font-size:.78rem; font-weight:600; }}
-.aspect-badge-neu {{ background:{t["neu_badge_bg"]}; color:{t["neu_badge_text"]}; border-radius:6px; padding:2px 10px; font-size:.78rem; font-weight:600; }}
+.aspect-badge-pos {{ background:{t["pos_badge_bg"]}; color:{t["pos_badge_text"]}; border-radius:6px; padding:2px 10px; font-size:.82rem; font-weight:600; }}
+.aspect-badge-neg {{ background:{t["neg_badge_bg"]}; color:{t["neg_badge_text"]}; border-radius:6px; padding:2px 10px; font-size:.82rem; font-weight:600; }}
+.aspect-badge-neu {{ background:{t["neu_badge_bg"]}; color:{t["neu_badge_text"]}; border-radius:6px; padding:2px 10px; font-size:.82rem; font-weight:600; }}
 .conf-bar  {{ height:6px; border-radius:3px; background:{t["conf_bar_bg"]}; margin-top:6px; }}
 .conf-fill {{ height:6px; border-radius:3px; }}
 
@@ -189,7 +191,7 @@ html, body, [class*="css"] {{ font-family: 'Inter', sans-serif; }}
 .vader-card {{ background:{t["vader_bg"]}; border:1px solid {t["vader_border"]}; border-radius:12px; padding:1.2rem; text-align:center; }}
 .vader-label {{ font-size:.85rem; color:{t["text_dim"]}; text-transform:uppercase; letter-spacing:.1em; }}
 .vader-value {{ font-size:1.6rem; font-weight:700; color:{t["text_dim"]}; margin:.3rem 0; }}
-.vader-limit {{ font-size:.78rem; color:{t["text_dim"]}; margin-top:.5rem; font-style:italic; }}
+.vader-limit {{ font-size:.82rem; color:{t["text_dim"]}; margin-top:.5rem; font-style:italic; }}
 .callout      {{ background:{t["callout_bg"]}; border:1px solid {t["callout_border"]}; border-radius:10px; padding:1rem 1.5rem; color:{t["callout_text"]}; font-size:.92rem; }}
 .callout-warn {{ background:{t["callout_warn_bg"]}; border:1px solid {t["callout_warn_border"]}; border-radius:10px; padding:1rem 1.5rem; color:{t["callout_warn_text"]}; font-size:.92rem; }}
 
@@ -205,13 +207,67 @@ button[kind="primary"] {{
     background:{t["btn_grad"]};
     border:none; border-radius:8px; font-weight:600; letter-spacing:.03em;
 }}
-
-/* Override streamlit default text colors for light mode */
-.stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown li {{ color:{t["text_muted"]} !important; }}
-h1, h2, h3, h4, h5, h6, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {{ color:{t["text"]} !important; }}
-.stCaption {{ color:{t["text_dim"]} !important; }}
 </style>
 """
+
+    # ── Dark mode: override Streamlit native widget colors ──────────────────
+    if not is_dark:
+        return shared  # light mode: Streamlit's native light base does the work
+
+    dark_overrides = f"""
+<style>
+/* ── Streamlit native widget text overrides for dark mode ── */
+.stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown li, .stMarkdown div,
+[data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] span,
+[data-testid="stMarkdownContainer"] li, [data-testid="stMarkdownContainer"] div,
+.stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4,
+h1, h2, h3, h4, h5, h6 {{
+    color: {t["text_muted"]} !important;
+}}
+.stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4,
+h1, h2, h3, h4, h5, h6 {{ color: {t["text"]} !important; }}
+.stCaption, .stCaption p, [data-testid="stCaptionContainer"] {{ color: {t["text_dim"]} !important; }}
+
+/* metric values */
+[data-testid="stMetricValue"] {{ color: {t["text"]} !important; }}
+[data-testid="stMetricLabel"] {{ color: {t["text_dim"]} !important; }}
+
+/* sidebar text */
+[data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] .stMarkdown p,
+[data-testid="stSidebar"] .stMarkdown span {{ color: {t["text_muted"]} !important; }}
+[data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] h4 {{ color: {t["text"]} !important; }}
+[data-testid="stSidebar"] .stCaption {{ color: {t["text_dim"]} !important; }}
+
+/* selectbox / radio / input labels */
+.stSelectbox label, .stRadio label, .stTextInput label, .stTextArea label,
+.stFileUploader label, .stNumberInput label, .stCheckbox label,
+[data-baseweb="select"] span, [data-baseweb="radio"] span {{
+    color: {t["text_muted"]} !important;
+}}
+
+/* expander */
+.streamlit-expanderHeader, .streamlit-expanderHeader p,
+.streamlit-expanderHeader span {{ color: {t["text"]} !important; }}
+
+/* info / warning / error boxes */
+.stAlert, .stAlert p, .stAlert span {{ color: {t["text_muted"]} !important; }}
+
+/* dataframe */
+.stDataFrame, .stDataFrame th, .stDataFrame td,
+[data-testid="stTable"] th, [data-testid="stTable"] td {{
+    color: {t["text_muted"]} !important;
+}}
+.stDataFrame th {{ color: {t["text"]} !important; }}
+
+/* spinner text */
+.stSpinner {{ color: {t["text_muted"]} !important; }}
+
+/* progress bar text */
+.stProgress > div > div > div {{ color: {t["text"]} !important; }}
+</style>
+"""
+    return shared + dark_overrides
 
 
 # ─── Custom CSS ────────────────────────────────────────────────────────────────
@@ -320,7 +376,7 @@ def render_aspect_card(aspect: dict):
   </div>
   {f'<div class="aspect-quote">"{quote}"</div>' if quote else ""}
   {bar}
-  <div style="font-size:.75rem;color:#64748b;margin-top:3px;">Confidence: {conf:.0%}</div>
+  <div style="font-size:.75rem;color:{_tc("text_dim")};margin-top:3px;">Confidence: {conf:.0%}</div>
 </div>""",
         unsafe_allow_html=True,
     )
@@ -431,7 +487,7 @@ with tab1:
                 st.markdown(f'<div class="section-header">{t("tab1_ai_header")}</div>', unsafe_allow_html=True)
                 overall = absa_result.get("overall_sentiment", "neutral")
                 st.markdown(
-                    f'<div style="margin-bottom:1rem;font-size:.95rem;color:#94a3b8;">'
+                    f'<div style="margin-bottom:1rem;font-size:.95rem;color:{_tc("text_muted")};">'
                     f'{t("tab1_overall")} {sentiment_badge(overall)}</div>',
                     unsafe_allow_html=True,
                 )
@@ -480,7 +536,7 @@ with tab1:
 
                 # ── What VADER cannot tell you (per detected aspect) ──
                 st.markdown(
-                    f'<div style="font-size:.78rem;font-weight:600;color:#64748b;'
+                    f'<div style="font-size:.82rem;font-weight:600;color:{_tc("text_dim")};'
                     f'text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;">'
                     f'{t("tab1_vader_blind_spots")}</div>',
                     unsafe_allow_html=True,
@@ -490,8 +546,8 @@ with tab1:
                     rows_html = "".join(
                         f'<div style="display:flex;justify-content:space-between;align-items:center;'
                         f'padding:.45rem .7rem;margin-bottom:.3rem;'
-                        f'background:rgba(255,255,255,0.03);border-radius:6px;">'
-                        f'<span style="color:#64748b;font-size:.88rem;">📌 {a["name"].replace("_"," ").title()}</span>'
+                        f'background:{_tc("row_bg")};border-radius:6px;">'
+                        f'<span style="color:{_tc("text_dim")};font-size:.88rem;">📌 {a["name"].replace("_"," ").title()}</span>'
                         f'<span style="color:#ef4444;font-size:.8rem;font-weight:600;">❌ Unknown</span>'
                         f'</div>'
                         for a in detected_aspects
@@ -499,7 +555,7 @@ with tab1:
                     st.markdown(rows_html, unsafe_allow_html=True)
                 else:
                     st.markdown(
-                        '<div style="color:#475569;font-size:.85rem;padding:.5rem;">No aspect data available.</div>',
+                        f'<div style="color:{_tc("text_dim")};font-size:.85rem;padding:.5rem;">No aspect data available.</div>',
                         unsafe_allow_html=True,
                     )
 
@@ -816,7 +872,7 @@ with tab4:
         fig.update_layout(
             barmode="group",
             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(255,255,255,0.03)",
-            font=dict(color="#cbd5e1"),
+            font=dict(color=_tc("text_muted")),
             yaxis=dict(range=[0,1.15], title="F1 Score", gridcolor="rgba(255,255,255,0.07)"),
             legend=dict(bgcolor="rgba(0,0,0,0)"),
             height=320, margin=dict(t=30,b=30),
